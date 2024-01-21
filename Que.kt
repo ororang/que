@@ -1,64 +1,65 @@
 package com.study
 
-class que{
+class Queue {
     val queSize = 50
     var qued = arrayOfNulls<String>(queSize)
     var front = 0
     var rear = -1
-    var itemcount = 0
+    var itemCount = 0
 
-    fun isfull(): Boolean{
-        if(itemcount == queSize ){
-            return true
-        }else{
-            return false
-        }
-    }
-    fun isEmpty():Boolean{
-        return itemcount == 0
-    }
-    fun delete(): String? {
-        var data: String? = qued[front++]
-        if(front == queSize){
-            front = 0
-        }
-        itemcount --
-        return data
-    }
+    fun isFull() = itemCount == queSize
+    fun isEmpty() = itemCount == 0
 
-    fun insert(data:String){
-        if(isfull() == false){
-            if(rear == queSize-1){
-                rear = -1
+    fun poll(): String? =
+        if (isEmpty()) {
+            null
+        } else {
+            var data: String? = qued[front++]
+            if (front == queSize) {
+                front = 0
             }
-
-            rear++
-            qued[rear] = data
-            itemcount++
+            itemCount--
+            data
         }
 
-    }
-
+    fun offer(data: String): Boolean =
+        if (isFull()) {
+            false
+        } else {
+            if (rear == queSize - 1) {
+                rear = 0
+            } else {
+                rear++
+            }
+            qued[rear] = data
+            itemCount++
+            true
+        }
 
     override fun toString(): String {
-        val validElements = qued.sliceArray(front..rear)
-        return validElements.contentToString()
-    }
-
-}
-
-fun main(){
-    var quee = que()
-    with(quee){
-        for (i in 1..80){
-            quee.insert(i.toString())
+        if (itemCount == 0) {
+            return ""
         }
-        delete()
-
-        println(quee)
+        val validElements = if (front <= rear) {
+            qued.sliceArray(front..rear)
+        } else {
+            qued.sliceArray(front until queSize) + qued.sliceArray(0..rear)
+        }
+        return validElements.joinToString(",")
     }
 
-
-
-
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            val quee = Queue()
+            with(quee) {
+                for (i in 1..80) {
+                    quee.offer(i.toString())
+                }
+                val polledValue = quee.poll()
+                println("Polled value: $polledValue")
+                println(quee)
+            }
+        }
+    }
 }
